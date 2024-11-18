@@ -27,6 +27,16 @@ export default function Reports() {
     fetchTrades();
   }, []);
 
+  useEffect(() => {
+    console.log('Trades por mês:', 
+        initialTrades.reduce((acc, trade) => {
+            const month = new Date(trade.data).getMonth() + 1;
+            acc[month] = (acc[month] || 0) + 1;
+            return acc;
+        }, {} as Record<number, number>)
+    );
+  }, [initialTrades]);
+
   const fetchTrades = async () => {
     try {
       const response = await fetch('https://service-relatorio-server-api.dpbdp1.easypanel.host/api/trades');
@@ -56,8 +66,11 @@ export default function Reports() {
   const filteredData = initialTrades.filter(trade => {
     const matchesSearch = trade.ativo.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDirection = selectedDirection === 'ALL' || trade.direcao === selectedDirection;
+    
     const tradeDate = new Date(trade.data);
-    const matchesMonth = tradeDate.getUTCMonth() + 1 === selectedMonth;
+    const tradeMonth = tradeDate.getMonth() + 1;
+    const matchesMonth = tradeMonth === selectedMonth;
+    
     return matchesSearch && matchesDirection && matchesMonth;
   });
 
