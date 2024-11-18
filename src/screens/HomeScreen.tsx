@@ -1,11 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
+import { formatMessage, formatDate } from '../utils/messageFormatting';
 
 interface Message {
   id: number;
   text: string;
   createdAt: string;
+  formattedContent?: {
+    type: string;
+    header: string;
+    data?: any;
+    message?: string;
+  };
 }
 
 export default function HomeScreen() {
@@ -29,7 +36,13 @@ export default function HomeScreen() {
       }
       const data = await response.json();
       if (data.length > 0) {
-        setMessages(data);
+        const formattedMessages = data.map((message: any) => ({
+          id: message.id,
+          text: message.text,
+          createdAt: message.createdAt,
+          formattedContent: formatMessage(message.text)
+        }));
+        setMessages(formattedMessages);
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -38,24 +51,51 @@ export default function HomeScreen() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    
-    const options: Intl.DateTimeFormatOptions = {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    };
+  const renderMessageContent = (message: Message) => {
+    if (!message.formattedContent) return <Text style={styles.messageText}>{message.text}</Text>;
 
-    const time = date.toLocaleTimeString('pt-BR', options);
-    const today = now.toDateString();
-    const messageDate = date.toDateString();
+    const { type, header, data, message: cancelMessage } = message.formattedContent;
 
-    if (messageDate === today) {
-      return `Hoje, ${time}`;
-    } else {
-      return date.toLocaleDateString('pt-BR');
+    switch (type) {
+      case 'take-profit':
+        return (
+          <>
+            <Text style={styles.messageHeader}>{header}</Text>
+            <Text style={styles.messageText}>{data.type}</Text>
+            <Text style={styles.messageDetail}>Alvo: {data.alvo}</Text>
+            <Text style={styles.messageDetail}>Lucro: {data.lucro}</Text>
+            <Text style={styles.messageDetail}>Período: {data.periodo}</Text>
+          </>
+        );
+
+      case 'compra':
+      case 'venda':
+        return (
+          <>
+            <Text style={styles.messageHeader}>{header}</Text>
+            <Text style={styles.messageDetail}>{data.entradaZona}</Text>
+            <Text style={styles.messageDetail}>{data.alavancagem}</Text>
+            <View style={styles.alvosContainer}>
+              {data.alvos.filter((alvo: string) => alvo.trim() !== '').map((alvo: string, index: number) => (
+                <View key={index} style={styles.alvoCircle}>
+                  <Text style={styles.alvoText}>{alvo}</Text>
+                </View>
+              ))}
+            </View>
+            <Text style={styles.messageDetail}>{data.stoploss}</Text>
+          </>
+        );
+
+      case 'cancelado':
+        return (
+          <>
+            <Text style={styles.messageHeader}>{header}</Text>
+            <Text style={styles.messageText}>{cancelMessage}</Text>
+          </>
+        );
+
+      default:
+        return <Text style={styles.messageText}>{message.text}</Text>;
     }
   };
 
@@ -76,7 +116,7 @@ export default function HomeScreen() {
       >
         {messages.map((message, index) => (
           <View key={index} style={styles.messageCard}>
-            <Text style={styles.messageText}>{message.text}</Text>
+            {renderMessageContent(message)}
             <Text style={styles.dateText}>{formatDate(message.createdAt)}</Text>
           </View>
         ))}
@@ -116,14 +156,54 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     marginBottom: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  messageHeader: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  messageDetail: {
+    color: '#ddd',
+    fontSize: 14,
+    marginVertical: 2,
   },
   messageText: {
     color: '#fff',
     fontSize: 16,
+    lineHeight: 24,
   },
   dateText: {
     color: '#666',
     fontSize: 12,
     marginTop: 8,
+  },
+  alvosContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginVertical: 6,
+  },
+  alvoCircle: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 15,
+    padding: 6,
+    minWidth: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  alvoText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '500',
   },
 }); 
