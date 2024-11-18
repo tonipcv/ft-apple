@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { useState } from 'react';
-import { Video } from 'expo-av';
+import { WebView } from 'react-native-webview';
 
 interface Episode {
   id: number;
@@ -41,14 +41,14 @@ export default function Courses() {
       {currentEpisode ? (
         // Video Player View
         <View style={styles.videoContainer}>
-          <Video
+          <WebView
             source={{ 
-              uri: `https://player.pandavideo.com.br/embed/?v=${currentEpisode.videoId}` 
+              uri: `https://player.pandavideo.com.br/embed/?v=${currentEpisode.videoId}&autoplay=true` 
             }}
             style={styles.video}
-            useNativeControls
-            resizeMode="contain"
-            shouldPlay
+            allowsFullscreenVideo={true}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
           />
           <TouchableOpacity 
             style={styles.closeButton}
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
   },
   video: {
     width: Dimensions.get('window').width,
-    height: 300,
+    height: Dimensions.get('window').width * (9/16),
   },
   closeButton: {
     position: 'absolute',
