@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from './src/screens/HomeScreen';
 import Reports from './src/screens/Reports';
+import Courses from './src/screens/Courses';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const Tab = createBottomTabNavigator();
@@ -43,6 +44,16 @@ export default function App() {
                 <Ionicons name="stats-chart" size={size} color={color} />
               ),
               tabBarLabel: 'Relatórios'
+            }}
+          />
+          <Tab.Screen 
+            name="Courses" 
+            component={Courses}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="book" size={size} color={color} />
+              ),
+              tabBarLabel: 'Cursos'
             }}
           />
         </Tab.Navigator>
