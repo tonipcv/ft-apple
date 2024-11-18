@@ -18,7 +18,6 @@ export default function Reports() {
   const [loading, setLoading] = useState<boolean>(true);
 
   const months = [
-    { number: 8, name: 'Agosto' },
     { number: 9, name: 'Setembro' },
     { number: 10, name: 'Outubro' },
   ];
