@@ -135,7 +135,7 @@ export default function Login({ navigation }: any) {
           onPress={() => navigation.navigate('ForgotPassword')}
           style={styles.forgotPasswordButton}
         >
-          <Text style={styles.forgotPasswordText}>Esqueceu a senha?</Text>
+          <Text style={styles.forgotPasswordText}>Esqueceu sua senha?</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -245,14 +245,11 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   forgotPasswordButton: {
-    marginTop: 20,
+    marginTop: 16,
     alignItems: 'center',
-    width: '100%',
-    maxWidth: 400,
-    alignSelf: 'center',
   },
   forgotPasswordText: {
-    color: '#9ca3af',
+    color: '#666',
     fontSize: 14,
   },
 }); 

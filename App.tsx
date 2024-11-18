@@ -10,6 +10,7 @@ import Login from './src/screens/Login';
 import HomeScreen from './src/screens/HomeScreen';
 import Reports from './src/screens/Reports';
 import Courses from './src/screens/Courses';
+import ForgotPassword from './src/screens/ForgotPassword';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -150,6 +151,7 @@ function Navigation() {
       ) : (
         <Stack.Screen name="Login" component={Login} />
       )}
+      <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
     </Stack.Navigator>
   );
 }

@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
 import { WebView } from 'react-native-webview';
 
@@ -22,7 +22,7 @@ export default function Courses() {
       duration: "2:30",
       thumbnail: "/teaser-thumb.jpg",
       number: 1,
-      videoId: "35186692-adde-4280-819f-e35af9ece710"
+      videoId: "73a6f2ac-16c8-4234-acf7-462a2d2a8fb9"
     },
     {
       id: 2,
@@ -30,7 +30,7 @@ export default function Courses() {
       duration: "2:30",
       thumbnail: "/teaser-thumb2.jpg",
       number: 2,
-      videoId: "357a2661-4c22-4244-b57e-a9be0244af50"
+      videoId: "a3644631-7ce5-4fac-a3a6-4d55cb933cfd"
     }
   ];
 
@@ -42,14 +42,66 @@ export default function Courses() {
         // Video Player View
         <View style={styles.videoContainer}>
           <WebView
-            source={{ 
-              uri: `https://player.pandavideo.com.br/embed/?v=${currentEpisode.videoId}`
+            source={{
+              html: `
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+                    <style>
+                      body {
+                        margin: 0;
+                        padding: 0;
+                        background-color: black;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                      }
+                      .video-container {
+                        position: relative;
+                        width: 100%;
+                        padding-top: 56.25%;
+                      }
+                      iframe {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        border: none;
+                      }
+                    </style>
+                  </head>
+                  <body>
+                    <div class="video-container">
+                      <iframe
+                        src="https://player-vz-7b6cf9e4-8bf.tv.pandavideo.com.br/embed/?v=${currentEpisode.videoId}"
+                        allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+                        allowfullscreen="true"
+                      ></iframe>
+                    </div>
+                  </body>
+                </html>
+              `
             }}
             style={styles.video}
             allowsFullscreenVideo={true}
             javaScriptEnabled={true}
             domStorageEnabled={true}
-            mediaPlaybackRequiresUserAction={true}
+            mediaPlaybackRequiresUserAction={false}
+            startInLoadingState={true}
+            renderLoading={() => (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#4ade80" />
+              </View>
+            )}
+            onError={(syntheticEvent) => {
+              const { nativeEvent } = syntheticEvent;
+              console.warn('WebView error: ', nativeEvent);
+            }}
+            scrollEnabled={false}
+            bounces={false}
           />
           <TouchableOpacity 
             style={styles.closeButton}
@@ -248,8 +300,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   video: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').width * (9/16),
+    flex: 1,
+    backgroundColor: '#000',
   },
   closeButton: {
     position: 'absolute',
@@ -273,5 +325,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     padding: 16,
     backgroundColor: '#111',
+  },
+  loadingContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#000',
   },
 }); 
