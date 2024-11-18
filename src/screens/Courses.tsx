@@ -43,12 +43,13 @@ export default function Courses() {
         <View style={styles.videoContainer}>
           <WebView
             source={{ 
-              uri: `https://player.pandavideo.com.br/embed/?v=${currentEpisode.videoId}&autoplay=true` 
+              uri: `https://player.pandavideo.com.br/embed/?v=${currentEpisode.videoId}`
             }}
             style={styles.video}
             allowsFullscreenVideo={true}
             javaScriptEnabled={true}
             domStorageEnabled={true}
+            mediaPlaybackRequiresUserAction={true}
           />
           <TouchableOpacity 
             style={styles.closeButton}
