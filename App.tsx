@@ -11,6 +11,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import Reports from './src/screens/Reports';
 import Courses from './src/screens/Courses';
 import ForgotPassword from './src/screens/ForgotPassword';
+import SplashScreen from './src/components/SplashScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -157,10 +158,15 @@ function Navigation() {
 }
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
   return (
     <AuthProvider>
       <SafeAreaProvider>
         <NavigationContainer>
+          {showSplash ? (
+            <SplashScreen onAnimationComplete={() => setShowSplash(false)} />
+          ) : null}
           <Navigation />
         </NavigationContainer>
       </SafeAreaProvider>
