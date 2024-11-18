@@ -7,7 +7,7 @@ interface Episode {
   id: number;
   title: string;
   duration: string;
-  thumbnail: string;
+  thumbnail: any;
   number: number;
   videoId: string;
 }
@@ -20,7 +20,7 @@ export default function Courses() {
       id: 1,
       title: "Como pegar as entradas dos sinais da forma correta",
       duration: "2:30",
-      thumbnail: "/teaser-thumb.jpg",
+      thumbnail: require('../../assets/thumb.jpg'),
       number: 1,
       videoId: "73a6f2ac-16c8-4234-acf7-462a2d2a8fb9"
     },
@@ -28,7 +28,7 @@ export default function Courses() {
       id: 2,
       title: "Como ativar as notificações do Grupo de Sinais",
       duration: "2:30",
-      thumbnail: "/teaser-thumb2.jpg",
+      thumbnail: require('../../assets/thumb1.jpg'),
       number: 2,
       videoId: "a3644631-7ce5-4fac-a3a6-4d55cb933cfd"
     }
@@ -134,7 +134,7 @@ export default function Courses() {
                   onPress={() => setActiveEpisode(episode.id)}
                 >
                   <Image
-                    source={{ uri: 'https://via.placeholder.com/150' }}
+                    source={episode.thumbnail}
                     style={styles.episodeThumbnail}
                   />
                   <View style={styles.episodeInfo}>
