@@ -10,10 +10,16 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Button,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+import * as WebBrowser from 'expo-web-browser';
+import { makeRedirectUri } from 'expo-auth-session';
+
+// Registrar o WebBrowser
+WebBrowser.maybeCompleteAuthSession();
 
 export default function Login({ navigation }: any) {
   const [email, setEmail] = useState('');
@@ -42,16 +48,49 @@ export default function Login({ navigation }: any) {
 
   const handleAppleLogin = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      setIsSubmitting(true);
+      setError(null);
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
+        options: {
+          redirectTo: makeRedirectUri({
+            scheme: 'ft',
+            path: 'auth/callback',
+          }),
+          skipBrowserRedirect: true,
+        },
       });
+
       if (error) throw error;
+
+      if (data.url) {
+        const result = await WebBrowser.openAuthSessionAsync(
+          data.url,
+          makeRedirectUri({
+            scheme: 'ft',
+            path: 'auth/callback',
+          })
+        );
+
+        if (result.type === 'success') {
+          const { url } = result;
+          const { searchParams } = new URL(url);
+          const code = searchParams.get('code');
+          
+          if (code) {
+            await supabase.auth.exchangeCodeForSession(code);
+          }
+        }
+      }
     } catch (error) {
       if (error instanceof Error) {
         setError(`Falha no login com Apple: ${error.message}`);
       } else {
         setError('Falha no login com Apple. Por favor, tente novamente.');
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
