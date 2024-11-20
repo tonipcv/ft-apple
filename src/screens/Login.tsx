@@ -40,17 +40,17 @@ export default function Login({ navigation }: any) {
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleAppleLogin = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: 'apple',
       });
       if (error) throw error;
     } catch (error) {
       if (error instanceof Error) {
-        setError(`Falha no login com Google: ${error.message}`);
+        setError(`Falha no login com Apple: ${error.message}`);
       } else {
-        setError('Falha no login com Google. Por favor, tente novamente.');
+        setError('Falha no login com Apple. Por favor, tente novamente.');
       }
     }
   };
@@ -75,16 +75,16 @@ export default function Login({ navigation }: any) {
         )}
 
         <TouchableOpacity
-          style={styles.googleButton}
-          onPress={handleGoogleLogin}
+          style={styles.appleButton}
+          onPress={handleAppleLogin}
           activeOpacity={0.7}
         >
-          <View style={styles.googleButtonContent}>
+          <View style={styles.appleButtonContent}>
             <Image
-              source={require('../../assets/google-icon.png')} // Você precisará adicionar este ícone
-              style={styles.googleIcon}
+              source={require('../../assets/apple-icon.png')} // Você precisará adicionar este ícone
+              style={styles.appleIcon}
             />
-            <Text style={styles.googleButtonText}>Continuar com Google</Text>
+            <Text style={styles.appleButtonText}>Continuar com Apple</Text>
           </View>
         </TouchableOpacity>
 
@@ -166,8 +166,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
-  googleButton: {
-    backgroundColor: '#fff',
+  appleButton: {
+    backgroundColor: '#000',
     borderRadius: 8,
     padding: 12,
     marginBottom: 20,
@@ -175,18 +175,19 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     alignSelf: 'center',
   },
-  googleButtonContent: {
+  appleButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  googleIcon: {
+  appleIcon: {
     width: 20,
     height: 20,
     marginRight: 10,
+    tintColor: '#fff', // Para garantir que o ícone fique branco
   },
-  googleButtonText: {
-    color: '#374151',
+  appleButtonText: {
+    color: '#fff',
     fontSize: 14,
     fontWeight: '500',
   },
