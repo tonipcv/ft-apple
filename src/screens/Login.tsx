@@ -17,11 +17,14 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri } from 'expo-auth-session';
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProps } from '../types/navigation';
 
 // Registrar o WebBrowser
 WebBrowser.maybeCompleteAuthSession();
 
-export default function Login({ navigation }: any) {
+export default function Login() {
+  const navigation = useNavigation<NavigationProps>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -101,81 +104,93 @@ export default function Login({ navigation }: any) {
     >
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('../../assets/ft-icone.png')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </View>
-
-        {error && (
-          <Text style={styles.errorText}>{error}</Text>
-        )}
-
-        <TouchableOpacity
-          style={styles.appleButton}
-          onPress={handleAppleLogin}
-          activeOpacity={0.7}
-        >
-          <View style={styles.appleButtonContent}>
+        <View style={styles.mainContent}>
+          <View style={styles.logoContainer}>
             <Image
-              source={require('../../assets/apple-icon.png')} // Você precisará adicionar este ícone
-              style={styles.appleIcon}
+              source={require('../../assets/ft-icone.png')}
+              style={styles.logo}
+              resizeMode="contain"
             />
-            <Text style={styles.appleButtonText}>Continuar com Apple</Text>
           </View>
-        </TouchableOpacity>
 
-        <View style={styles.dividerContainer}>
-          <View style={styles.divider} />
-          <Text style={styles.dividerText}>ou</Text>
-          <View style={styles.divider} />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>E-mail</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite seu e-mail"
-            placeholderTextColor="#666"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Senha</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite sua senha"
-            placeholderTextColor="#666"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-        </View>
-
-        <TouchableOpacity
-          style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
-          onPress={handleSubmit}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? (
-            <ActivityIndicator color="#000" />
-          ) : (
-            <Text style={styles.submitButtonText}>Entrar</Text>
+          {error && (
+            <Text style={styles.errorText}>{error}</Text>
           )}
-        </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate('ForgotPassword')}
-          style={styles.forgotPasswordButton}
-        >
-          <Text style={styles.forgotPasswordText}>Esqueceu sua senha?</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.appleButton}
+            onPress={handleAppleLogin}
+            activeOpacity={0.7}
+          >
+            <View style={styles.appleButtonContent}>
+              <Image
+                source={require('../../assets/apple-icon.png')}
+                style={styles.appleIcon}
+              />
+              <Text style={styles.appleButtonText}>Continuar com Apple</Text>
+            </View>
+          </TouchableOpacity>
+
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <Text style={styles.dividerText}>ou</Text>
+            <View style={styles.divider} />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>E-mail</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Digite seu e-mail"
+              placeholderTextColor="#666"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Senha</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Digite sua senha"
+              placeholderTextColor="#666"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
+
+          <TouchableOpacity
+            style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+            onPress={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <ActivityIndicator color="#000" />
+            ) : (
+              <Text style={styles.submitButtonText}>Entrar</Text>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ForgotPassword')}
+            style={styles.forgotPasswordButton}
+          >
+            <Text style={styles.forgotPasswordText}>Esqueceu sua senha?</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.bottomContainer}>
+          <Text style={styles.bottomText}>Ainda não tem uma conta?</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Home')}
+            style={styles.subscribeLink}
+          >
+            <Text style={styles.subscribeLinkText}>Assinar agora</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -189,8 +204,31 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     padding: 20,
+    justifyContent: 'space-between',
+  },
+  mainContent: {
+    flex: 1,
     justifyContent: 'center',
-    minHeight: '100%',
+  },
+  bottomContainer: {
+    marginTop: 20,
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#333',
+    alignItems: 'center',
+  },
+  bottomText: {
+    color: '#9ca3af',
+    fontSize: 14,
+    marginBottom: 8,
+  },
+  subscribeLink: {
+    padding: 4,
+  },
+  subscribeLinkText: {
+    color: '#4ade80',
+    fontSize: 14,
+    fontWeight: '600',
   },
   logoContainer: {
     alignItems: 'center',
