@@ -17,7 +17,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri } from 'expo-auth-session';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import { NavigationProps } from '../types/navigation';
 
 // Registrar o WebBrowser
@@ -41,9 +41,17 @@ export default function Login() {
     setError(null);
 
     try {
+      console.log('Tentando fazer login com:', email);
       await signIn(email, password);
-      navigation.navigate('HomeScreen');
+      
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'HomeScreen' }],
+        })
+      );
     } catch (error) {
+      console.error('Erro completo:', error);
       if (error instanceof Error) {
         setError(`Falha no login: ${error.message}`);
       } else {
@@ -87,7 +95,15 @@ export default function Login() {
           const code = searchParams.get('code');
           
           if (code) {
-            await supabase.auth.exchangeCodeForSession(code);
+            const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
+            if (sessionError) throw sessionError;
+            
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'HomeScreen' }],
+              })
+            );
           }
         }
       }
