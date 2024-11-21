@@ -1,7 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, RefreshControl, TouchableOpacity, Image, SafeAreaView, Alert } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
 import { formatMessage, formatDate } from '../utils/messageFormatting';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../contexts/AuthContext';
+import Courses from './Courses';
+import Reports from './Reports';
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProps } from '../types/navigation';
+import ProfileScreen from './ProfileScreen';
+
+const Tab = createBottomTabNavigator();
 
 interface Message {
   id: number;
@@ -15,10 +25,11 @@ interface Message {
   };
 }
 
-export default function HomeScreen() {
+function AlertsScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const lastNotifiedId = useRef<number | null>(null);
+  const { signOut } = useAuth();
 
   useEffect(() => {
     pollMessages();
@@ -100,12 +111,17 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Alertas de Entradas:</Text>
-        <TouchableOpacity onPress={pollMessages} disabled={isLoading}>
-          <Text style={styles.refreshButton}>↻</Text>
-        </TouchableOpacity>
+        <View style={styles.headerButtons}>
+          <TouchableOpacity onPress={pollMessages} disabled={isLoading} style={styles.headerButton}>
+            <Text style={styles.refreshButton}>↻</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={signOut} style={styles.headerButton}>
+            <Text style={styles.logoutText}>Sair</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView 
@@ -122,7 +138,93 @@ export default function HomeScreen() {
         ))}
       </ScrollView>
       <StatusBar style="light" />
+    </SafeAreaView>
+  );
+}
+
+function SupportScreen() {
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Suporte</Text>
+      </View>
+      <View style={styles.content}>
+        <Text style={styles.comingSoonText}>Em breve</Text>
+      </View>
     </View>
+  );
+}
+
+export default function HomeScreen() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: '#111',
+          borderTopColor: '#333',
+          borderTopWidth: 1,
+          height: 60,
+          paddingBottom: 8,
+        },
+        tabBarActiveTintColor: '#4ade80',
+        tabBarInactiveTintColor: '#666',
+      })}
+    >
+      <Tab.Screen 
+        name="Cursos" 
+        component={Courses}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen 
+        name="Relatórios" 
+        component={Reports}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="stats-chart-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen 
+        name="Alertas" 
+        component={AlertsScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Image
+              source={require('../../assets/ft-icone.png')}
+              style={[
+                styles.tabBarLogo,
+                { opacity: focused ? 1 : 0.5 }
+              ]}
+              resizeMode="contain"
+            />
+          ),
+          tabBarLabel: () => null,
+        }}
+      />
+      <Tab.Screen 
+        name="Suporte" 
+        component={SupportScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="help-circle-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen 
+        name="Perfil" 
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 }
 
@@ -142,6 +244,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  headerButton: {
+    padding: 4,
   },
   refreshButton: {
     color: '#fff',
@@ -205,5 +315,37 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     fontWeight: '500',
+  },
+  logoutText: {
+    color: '#666',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  comingSoonText: {
+    color: '#666',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  tabBarLogo: {
+    width: 50,
+    height: 50,
+    marginTop: 10,
+  },
+  signOutButton: {
+    backgroundColor: '#ef4444',
+    borderRadius: 8,
+    padding: 16,
+    width: '80%',
+    alignItems: 'center',
+  },
+  signOutText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 }); 

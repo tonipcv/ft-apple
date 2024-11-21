@@ -8,15 +8,13 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
-import { NavigationProps } from '../types/navigation';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/AppNavigator';
+
+type NavigationProps = NativeStackNavigationProp<RootStackParamList>;
 
 export default function Home() {
   const navigation = useNavigation<NavigationProps>();
-  
-  const handleSubscribe = async () => {
-    // Implementar lógica do Apple Pay aqui
-    console.log('Iniciando processo de assinatura');
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -48,9 +46,9 @@ export default function Home() {
 
           <TouchableOpacity
             style={styles.subscribeButton}
-            onPress={handleSubscribe}
+            onPress={() => navigation.navigate('Register')}
           >
-            <Text style={styles.subscribeButtonText}>Assinar Agora</Text>
+            <Text style={styles.subscribeButtonText}>Criar Conta</Text>
           </TouchableOpacity>
         </View>
       </View>

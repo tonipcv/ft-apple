@@ -30,7 +30,8 @@
       "permissions": [
         "INTERNET",
         "MODIFY_AUDIO_SETTINGS"
-      ]
+      ],
+      "package": "com.k17.ft"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -45,8 +46,6 @@
         "projectId": "e471eacb-d416-4544-b832-b4c274a73fc0"
       }
     },
-    "plugins": [
-      "expo-secure-store"
-    ]
+    "scheme": "com.k17.ft"
   }
 }

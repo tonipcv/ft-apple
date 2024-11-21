@@ -1,7 +1,11 @@
 import 'react-native-url-polyfill/auto';
 import { createClient } from '@supabase/supabase-js';
 import * as SecureStore from 'expo-secure-store';
-import { makeRedirectUri } from 'expo-auth-session';
+import { Platform } from 'react-native';
+import Constants from 'expo-constants';
+
+const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl;
+const supabaseAnonKey = Constants.expoConfig?.extra?.supabaseAnonKey;
 
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
@@ -15,20 +19,15 @@ const ExpoSecureStoreAdapter = {
   },
 };
 
-const redirectUrl = makeRedirectUri({
-  path: 'auth/callback',
-});
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Supabase URL and Anon Key are required.');
+}
 
-export const supabase = createClient(
-  process.env.EXPO_PUBLIC_SUPABASE_URL!,
-  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!,
-  {
-    auth: {
-      storage: ExpoSecureStoreAdapter,
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: false,
-      flowType: 'pkce',
-    },
-  }
-); 
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    storage: Platform.OS === 'web' ? localStorage : ExpoSecureStoreAdapter,
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: false,
+  },
+}); 

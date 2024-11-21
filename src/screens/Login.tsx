@@ -32,12 +32,17 @@ export default function Login() {
   const { signIn } = useAuth();
 
   const handleSubmit = async () => {
+    if (!email || !password) {
+      setError('Por favor, preencha todos os campos');
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
 
     try {
       await signIn(email, password);
-      // Navegação será feita automaticamente pelo AuthContext
+      navigation.navigate('HomeScreen');
     } catch (error) {
       if (error instanceof Error) {
         setError(`Falha no login: ${error.message}`);
