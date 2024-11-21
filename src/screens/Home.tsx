@@ -1,15 +1,15 @@
 import {
   StyleSheet,
   View,
-  Text,
   TouchableOpacity,
   Image,
   SafeAreaView,
+  Text,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { RootStackParamList } from '../types/navigation';
 
 type NavigationProps = NativeStackNavigationProp<RootStackParamList>;
 
@@ -27,13 +27,6 @@ export default function Home() {
             style={styles.logo}
             resizeMode="contain"
           />
-        </View>
-
-        <View style={styles.welcomeContainer}>
-          <Text style={styles.title}>Bem-vindo ao FT</Text>
-          <Text style={styles.subtitle}>
-            Escolha como deseja continuar
-          </Text>
         </View>
 
         <View style={styles.buttonContainer}>
@@ -67,27 +60,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   logoContainer: {
+    flex: 1,
     alignItems: 'center',
-    marginTop: 60,
+    justifyContent: 'center',
   },
   logo: {
-    width: 120,
-    height: 60,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginVertical: 40,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#9ca3af',
-    textAlign: 'center',
+    width: 200,
+    height: 100,
   },
   buttonContainer: {
     width: '100%',

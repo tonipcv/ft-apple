@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView, RefreshControl, TouchableOpacity, Image, SafeAreaView, Alert } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, RefreshControl, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
 import { formatMessage, formatDate } from '../utils/messageFormatting';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -7,9 +7,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
 import Courses from './Courses';
 import Reports from './Reports';
-import { useNavigation } from '@react-navigation/native';
-import { NavigationProps } from '../types/navigation';
-import ProfileScreen from './ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -142,19 +139,6 @@ function AlertsScreen() {
   );
 }
 
-function SupportScreen() {
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Suporte</Text>
-      </View>
-      <View style={styles.content}>
-        <Text style={styles.comingSoonText}>Em breve</Text>
-      </View>
-    </View>
-  );
-}
-
 export default function HomeScreen() {
   return (
     <Tab.Navigator
@@ -181,15 +165,6 @@ export default function HomeScreen() {
         }}
       />
       <Tab.Screen 
-        name="Relatórios" 
-        component={Reports}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="stats-chart-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen 
         name="Alertas" 
         component={AlertsScreen}
         options={{
@@ -207,20 +182,11 @@ export default function HomeScreen() {
         }}
       />
       <Tab.Screen 
-        name="Suporte" 
-        component={SupportScreen}
+        name="Relatórios" 
+        component={Reports}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="help-circle-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen 
-        name="Perfil" 
-        component={ProfileScreen}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
+            <Ionicons name="stats-chart-outline" size={size} color={color} />
           ),
         }}
       />
@@ -321,31 +287,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  comingSoonText: {
-    color: '#666',
-    fontSize: 16,
-    fontWeight: '500',
-  },
   tabBarLogo: {
     width: 50,
     height: 50,
     marginTop: 10,
-  },
-  signOutButton: {
-    backgroundColor: '#ef4444',
-    borderRadius: 8,
-    padding: 16,
-    width: '80%',
-    alignItems: 'center',
-  },
-  signOutText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
   },
 }); 

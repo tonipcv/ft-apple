@@ -7,6 +7,7 @@ import { NavigationProps } from '../types/navigation';
 
 type AuthContextType = {
   user: User | null;
+  session: Session | null;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   isRegistering: boolean;
@@ -17,8 +18,8 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isRegistering, setIsRegistering] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
+  const [isRegistering, setIsRegistering] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation<NavigationProps>();
 
@@ -91,6 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const value = {
     user,
+    session,
     signIn,
     signOut,
     isRegistering,
