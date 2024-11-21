@@ -43,13 +43,6 @@ export default function Login() {
     try {
       console.log('Tentando fazer login com:', email);
       await signIn(email, password);
-      
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: 'HomeScreen' }],
-        })
-      );
     } catch (error) {
       console.error('Erro completo:', error);
       if (error instanceof Error) {
@@ -97,13 +90,6 @@ export default function Login() {
           if (code) {
             const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
             if (sessionError) throw sessionError;
-            
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'HomeScreen' }],
-              })
-            );
           }
         }
       }

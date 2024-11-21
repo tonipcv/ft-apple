@@ -51,95 +51,54 @@ const RegisterScreen = ({ navigation }: Props) => {
       return;
     }
 
-    const MAX_RETRIES = 3;
-    let currentTry = 0;
-
-    const attemptSignUp = async (): Promise<any> => {
-      try {
-        console.log(`Tentativa ${currentTry + 1} de ${MAX_RETRIES}`);
-        
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              name,
-              phone,
-            },
-          }
-        });
-
-        return { data, error };
-      } catch (error) {
-        return { data: null, error };
-      }
-    };
-
     try {
       setLoading(true);
       console.log('Iniciando processo de registro...');
 
-      let result = null;
-      
-      while (currentTry < MAX_RETRIES) {
-        result = await attemptSignUp();
-        
-        // Se não houver erro de rede, saia do loop
-        if (!result.error || 
-            (result.error && 
-             !result.error.message?.includes('Network request failed'))) {
-          break;
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+            phone,
+          },
         }
+      });
 
-        currentTry++;
+      if (signUpError) {
+        console.log('Erro no registro:', signUpError);
         
-        if (currentTry < MAX_RETRIES) {
-          console.log(`Tentando novamente em 2 segundos...`);
-          await new Promise(resolve => setTimeout(resolve, 2000)); // Espera 2 segundos antes de tentar novamente
-        }
-      }
-
-      const { data, error } = result;
-
-      if (error) {
-        console.log('Erro detectado:', error);
-        
-        if (error.message?.includes('Network request failed')) {
+        if (signUpError.message?.includes('rate limit exceeded')) {
           Alert.alert(
-            'Erro de conexão', 
-            'Não foi possível conectar ao servidor após várias tentativas. Por favor, verifique sua conexão com a internet e tente novamente.'
+            'Muitas tentativas',
+            'Por favor, aguarde alguns minutos antes de tentar novamente.'
           );
           return;
         }
 
-        // Verifica se error.message existe antes de usar includes
-        if (error.message) {
-          if (error.message.includes('not authorized')) {
-            Alert.alert('Erro', 'Este endereço de e-mail não está autorizado para cadastro. Por favor, use um e-mail válido ou entre em contato com o suporte.');
-          } else if (error.message.includes('User already registered')) {
-            Alert.alert('Erro', 'Este e-mail já está registrado. Por favor, tente fazer login ou use outro e-mail.');
-          } else if (error.message.includes('Email confirmation required')) {
-            Alert.alert('Sucesso', 'É necessário confirmar o e-mail antes de concluir o cadastro. Por favor, verifique sua caixa de entrada.');
-            navigation.navigate('Login');
-          } else {
-            Alert.alert('Erro', `Erro no cadastro: ${error.message}`);
-          }
+        if (signUpError.message?.includes('Network request failed')) {
+          Alert.alert(
+            'Erro de conexão', 
+            'Não foi possível conectar ao servidor. Por favor, verifique sua conexão com a internet e tente novamente.'
+          );
         } else {
-          Alert.alert('Erro', 'Ocorreu um erro desconhecido durante o cadastro');
+          Alert.alert('Erro', signUpError.message);
         }
         return;
       }
 
-      if (data) {
-        console.log('Registro bem-sucedido:', data);
+      if (signUpData?.user) {
+        console.log('Registro bem-sucedido:', signUpData);
+        
         Alert.alert(
-          'Sucesso', 
-          'Conta criada com sucesso! Por favor, verifique seu email para confirmar sua conta.',
+          'Conta Criada!',
+          'Enviamos um link de confirmação para seu email. Por favor, verifique sua caixa de entrada e confirme seu email.',
           [
             {
               text: 'OK',
-              onPress: () => navigation.navigate('Login'),
-            },
+              onPress: () => navigation.navigate('RegisterSuccess')
+            }
           ]
         );
       }
@@ -147,7 +106,7 @@ const RegisterScreen = ({ navigation }: Props) => {
       console.log('Erro inesperado:', err);
       Alert.alert(
         'Erro',
-        'Ocorreu um erro inesperado durante o cadastro. Por favor, tente novamente.'
+        'Ocorreu um erro inesperado durante o cadastro. Por favor, tente novamente mais tarde.'
       );
     } finally {
       setLoading(false);
