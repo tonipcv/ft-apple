@@ -5,18 +5,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { NavigationProps } from '../types/navigation';
 
-interface AuthContextType {
+type AuthContextType = {
   user: User | null;
-  session: Session | null;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  loading: boolean;
-}
+  isRegistering: boolean;
+  setIsRegistering: (value: boolean) => void;
+};
 
-const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isRegistering, setIsRegistering] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation<NavigationProps>();
@@ -35,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       setLoading(false);
 
-      if (event === 'SIGNED_IN') {
+      if (event === 'SIGNED_IN' && !isRegistering) {
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -60,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigation]);
+  }, [navigation, isRegistering]);
 
   const signIn = async (email: string, password: string) => {
     console.log('Iniciando signIn no AuthContext');
@@ -88,14 +89,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const value = {
+    user,
+    signIn,
+    signOut,
+    isRegistering,
+    setIsRegistering,
+  };
+
   return (
-    <AuthContext.Provider value={{
-      user,
-      session,
-      signIn,
-      signOut,
-      loading,
-    }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

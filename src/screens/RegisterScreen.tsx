@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -14,17 +14,29 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { StatusBar } from 'expo-status-bar';
 import { supabase } from '../lib/supabase';
+import { RouteProp } from '@react-navigation/native';
+import { useAuth } from '../contexts/AuthContext';
 
 type RegisterScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'Register'
 >;
 
+type RegisterScreenRouteProp = RouteProp<RootStackParamList, 'Register'>;
+
 type Props = {
   navigation: RegisterScreenNavigationProp;
+  route: RegisterScreenRouteProp;
 };
 
-const RegisterScreen = ({ navigation }: Props) => {
+const RegisterScreen = ({ navigation, route }: Props) => {
+  const { setIsRegistering } = useAuth();
+  
+  useEffect(() => {
+    setIsRegistering(true);
+    return () => setIsRegistering(false);
+  }, []);
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -53,7 +65,9 @@ const RegisterScreen = ({ navigation }: Props) => {
 
     try {
       setLoading(true);
-      console.log('Iniciando processo de registro...');
+      
+      // Desativa a sessão atual se houver alguma
+      await supabase.auth.signOut();
 
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
@@ -61,8 +75,9 @@ const RegisterScreen = ({ navigation }: Props) => {
         options: {
           data: {
             name,
-            phone,
+            phone_number: phone,
           },
+          emailRedirectTo: 'ft://auth/callback'
         }
       });
 
@@ -90,17 +105,31 @@ const RegisterScreen = ({ navigation }: Props) => {
 
       if (signUpData?.user) {
         console.log('Registro bem-sucedido:', signUpData);
+
+        // 2. Salvar dados adicionais na tabela de perfis
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: signUpData.user.id,
+            name: name,
+            phone_number: phone,
+            phone_local_code: '+55',
+            email: email,
+            updated_at: new Date(),
+          });
+
+        if (profileError) {
+          console.error('Erro ao salvar perfil:', profileError);
+        }
+
+        // Força logout
+        await supabase.auth.signOut();
         
-        Alert.alert(
-          'Conta Criada!',
-          'Enviamos um link de confirmação para seu email. Por favor, verifique sua caixa de entrada e confirme seu email.',
-          [
-            {
-              text: 'OK',
-              onPress: () => navigation.navigate('RegisterSuccess')
-            }
-          ]
-        );
+        // Navega para a tela de sucesso
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'RegisterSuccess' }],
+        });
       }
     } catch (err) {
       console.log('Erro inesperado:', err);

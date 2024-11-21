@@ -1,33 +1,39 @@
 import React from 'react';
 import {
-  StyleSheet,
   View,
   Text,
-  TouchableOpacity,
+  StyleSheet,
   SafeAreaView,
   Image,
+  TouchableOpacity,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { useNavigation } from '@react-navigation/native';
 import { NavigationProps } from '../types/navigation';
-import { Ionicons } from '@expo/vector-icons';
 
-export default function RegisterSuccessScreen() {
-  const navigation = useNavigation<NavigationProps>();
+type Props = {
+  navigation: NavigationProps;
+};
 
+const RegisterSuccessScreen = ({ navigation }: Props) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       
       <View style={styles.content}>
-        <View style={styles.iconContainer}>
-          <Ionicons name="checkmark-circle" size={80} color="#4ade80" />
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('../../assets/ft-icone.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
         </View>
 
-        <Text style={styles.title}>Conta Criada com Sucesso!</Text>
-        <Text style={styles.subtitle}>
-          Enviamos um link de confirmação para seu email. Por favor, verifique sua caixa de entrada e confirme seu email para começar a usar todas as funcionalidades.
-        </Text>
+        <View style={styles.messageContainer}>
+          <Text style={styles.title}>Conta Criada!</Text>
+          <Text style={styles.message}>
+            Enviamos um link de confirmação para seu email. Por favor, verifique sua caixa de entrada e confirme seu email.
+          </Text>
+        </View>
 
         <TouchableOpacity
           style={styles.button}
@@ -38,7 +44,7 @@ export default function RegisterSuccessScreen() {
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -48,38 +54,48 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 20,
+    justifyContent: 'space-between',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginTop: 60,
+  },
+  logo: {
+    width: 120,
+    height: 60,
+  },
+  messageContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  iconContainer: {
-    marginBottom: 24,
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
+    marginBottom: 20,
     textAlign: 'center',
-    marginBottom: 16,
   },
-  subtitle: {
+  message: {
     fontSize: 16,
     color: '#9ca3af',
     textAlign: 'center',
-    marginBottom: 32,
-    paddingHorizontal: 20,
+    lineHeight: 24,
   },
   button: {
     backgroundColor: '#4ade80',
-    paddingVertical: 16,
-    paddingHorizontal: 32,
+    height: 50,
     borderRadius: 8,
-    width: '100%',
-    maxWidth: 300,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
   },
   buttonText: {
     color: '#000',
     fontSize: 16,
     fontWeight: '600',
-    textAlign: 'center',
   },
-}); 
+});
+
+export default RegisterSuccessScreen; 
