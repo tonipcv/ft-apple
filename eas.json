@@ -1,21 +1,26 @@
 {
   "cli": {
-    "version": ">= 13.2.1",
-    "appVersionSource": "remote"
+    "version": ">= 5.9.1"
   },
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "m-medium"
+      }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "m-medium"
+      }
     },
     "production": {
-      "autoIncrement": true
+      "distribution": "store",
+      "ios": {
+        "resourceClass": "m-medium"
+      }
     }
-  },
-  "submit": {
-    "production": {}
   }
 }

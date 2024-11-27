@@ -30,7 +30,12 @@ yarn-error.*
 *.pem
 
 # local env files
+.env
 .env*.local
 
 # typescript
 *.tsbuildinfo
+
+# Exclude native folders if using Prebuild
+/ios/
+/android/
