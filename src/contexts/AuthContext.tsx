@@ -65,13 +65,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [navigation, isRegistering]);
 
   const signIn = async (email: string, password: string) => {
-    console.log('Iniciando signIn no AuthContext');
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    
-    if (error) {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      setSession(data.session);
+      setUser(data.user);
+
+      return data;
+    } catch (error) {
       console.error('Erro no signIn:', error);
       throw error;
     }

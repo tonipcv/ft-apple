@@ -42,7 +42,18 @@ export default function Login() {
 
     try {
       console.log('Tentando fazer login com:', email);
-      await signIn(email, password);
+      const result = await signIn(email, password);
+      
+      // Adicione logs para debug
+      console.log('Login bem sucedido:', result);
+      
+      // Força a navegação para Home após login bem sucedido
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        })
+      );
     } catch (error) {
       console.error('Erro completo:', error);
       if (error instanceof Error) {
@@ -90,10 +101,19 @@ export default function Login() {
           if (code) {
             const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
             if (sessionError) throw sessionError;
+            
+            // Adicione o redirecionamento após login com Apple bem sucedido
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'Home' }],
+              })
+            );
           }
         }
       }
     } catch (error) {
+      console.error('Erro no login com Apple:', error);
       if (error instanceof Error) {
         setError(`Falha no login com Apple: ${error.message}`);
       } else {

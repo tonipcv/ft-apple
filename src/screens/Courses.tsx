@@ -1,7 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import { useState } from 'react';
 import { WebView } from 'react-native-webview';
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
 
 interface Episode {
   id: number;
@@ -10,6 +12,7 @@ interface Episode {
   thumbnail: any;
   number: number;
   videoId: string;
+  blocked?: boolean;
 }
 
 export default function Courses() {
@@ -18,28 +21,96 @@ export default function Courses() {
   const episodes: Episode[] = [
     {
       id: 1,
-      title: "Como pegar as entradas dos sinais da forma correta",
-      duration: "2:30",
+      title: "Criando Conta",
+      duration: "5:00",
       thumbnail: require('../../assets/thumb.jpg'),
       number: 1,
-      videoId: "73a6f2ac-16c8-4234-acf7-462a2d2a8fb9"
+      videoId: "5395e307-c953-4f5f-b488-05c7663e936e"
     },
     {
       id: 2,
-      title: "Como ativar as notificações do Grupo de Sinais",
-      duration: "2:30",
-      thumbnail: require('../../assets/thumb1.jpg'),
+      title: "Como abrir operações",
+      duration: "8:00",
+      thumbnail: require('../../assets/thumb.jpg'),
       number: 2,
-      videoId: "a3644631-7ce5-4fac-a3a6-4d55cb933cfd"
+      videoId: "77a18ba6-0b61-4404-84e1-439ac21939b6"
+    },
+    {
+      id: 3,
+      title: "Ordens Automáticas",
+      duration: "7:00",
+      thumbnail: require('../../assets/thumb.jpg'),
+      number: 3,
+      videoId: "2346652c-0339-4e70-9b79-d38cce3a3e66"
+    },
+    {
+      id: 4,
+      title: "Indicador RSI",
+      duration: "6:30",
+      thumbnail: require('../../assets/thumb.jpg'),
+      number: 4,
+      videoId: "d529afa3-5e48-4f0e-8d7b-4bd1340d8c11"
+    },
+    {
+      id: 5,
+      title: "Análise gráfica",
+      duration: "7:30",
+      thumbnail: require('../../assets/thumb.jpg'),
+      number: 5,
+      videoId: "32763169-e418-4aee-a0df-b07db05f1843"
+    },
+    {
+      id: 6,
+      title: "Gerenciamento",
+      duration: "6:00",
+      thumbnail: require('../../assets/thumb.jpg'),
+      number: 6,
+      videoId: "c3853fe1-2f07-4215-9778-a20ed81d1b23"
+    },
+    {
+      id: 7,
+      title: "Informação Importante!",
+      duration: "6:00",
+      thumbnail: require('../../assets/thumb.jpg'),
+      number: 7,
+      videoId: "c689c709-5643-4fb6-be32-6f080a5f5066"
+    },
+    {
+      id: 8,
+      title: "Estratégia Exclusiva 1",
+      duration: "8:00",
+      thumbnail: require('../../assets/thumb.jpg'),
+      number: 8,
+      videoId: "blocked",
+      blocked: true
+    },
+    {
+      id: 9,
+      title: "Estratégia Exclusiva 2",
+      duration: "10:00",
+      thumbnail: require('../../assets/thumb.jpg'),
+      number: 9,
+      videoId: "blocked",
+      blocked: true
+    },
+    {
+      id: 10,
+      title: "Estratégia Exclusiva 3",
+      duration: "7:00",
+      thumbnail: require('../../assets/thumb.jpg'),
+      number: 10,
+      videoId: "blocked",
+      blocked: true
     }
   ];
 
   const currentEpisode = episodes.find(ep => ep.id === activeEpisode);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar style="light" />
+
       {currentEpisode ? (
-        // Video Player View
         <View style={styles.videoContainer}>
           <WebView
             source={{
@@ -86,57 +157,42 @@ export default function Courses() {
               `
             }}
             style={styles.video}
-            allowsFullscreenVideo={true}
-            javaScriptEnabled={true}
-            domStorageEnabled={true}
-            mediaPlaybackRequiresUserAction={false}
-            startInLoadingState={true}
-            renderLoading={() => (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#4ade80" />
-              </View>
-            )}
-            onError={(syntheticEvent) => {
-              const { nativeEvent } = syntheticEvent;
-              console.warn('WebView error: ', nativeEvent);
-            }}
-            scrollEnabled={false}
-            bounces={false}
           />
           <TouchableOpacity 
             style={styles.closeButton}
             onPress={() => setActiveEpisode(null)}
           >
-            <Text style={styles.closeButtonText}>×</Text>
+            <Ionicons name="close" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.videoTitle}>{currentEpisode.title}</Text>
         </View>
       ) : (
-        // Course Content View
         <>
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>Curso Futuros Tech</Text>
-            <Text style={styles.headerSubtitle}>
-              Passo a passo para ter um aproveitamento máximo com as entradas da tecnologia
-            </Text>
-          </View>
-
           <ScrollView style={styles.content}>
             <View style={styles.episodesSection}>
-              <Text style={styles.sectionTitle}>Episódios</Text>
+              <Text style={styles.sectionTitle}>Curso Gratuito</Text>
               {episodes.map((episode) => (
                 <TouchableOpacity
                   key={episode.id}
                   style={[
                     styles.episodeCard,
-                    activeEpisode === episode.id && styles.episodeCardActive
+                    activeEpisode === episode.id && styles.episodeCardActive,
+                    episode.blocked && styles.episodeCardBlocked
                   ]}
-                  onPress={() => setActiveEpisode(episode.id)}
+                  onPress={() => !episode.blocked && setActiveEpisode(episode.id)}
+                  disabled={episode.blocked}
                 >
-                  <Image
-                    source={episode.thumbnail}
-                    style={styles.episodeThumbnail}
-                  />
+                  <View style={styles.thumbnailContainer}>
+                    <Image
+                      source={episode.thumbnail}
+                      style={styles.episodeThumbnail}
+                    />
+                    {episode.blocked && (
+                      <View style={styles.blockedOverlay}>
+                        <Text style={styles.blockedText}>Em breve...</Text>
+                      </View>
+                    )}
+                  </View>
                   <View style={styles.episodeInfo}>
                     <Text style={styles.episodeNumber}>Aula {episode.number}</Text>
                     <Text style={styles.episodeTitle}>{episode.title}</Text>
@@ -159,21 +215,20 @@ export default function Courses() {
                 </View>
               </View>
 
-              <View style={styles.materialsCard}>
-                <Text style={styles.materialsTitle}>Materiais Complementares</Text>
-                <TouchableOpacity 
-                  style={styles.materialLink}
-                  onPress={() => {/* Implement link handling */}}
-                >
-                  <Text style={styles.materialLinkText}>Black Book</Text>
+              <View style={styles.premiumCard}>
+                <Text style={styles.premiumTitle}>Acesso Premium</Text>
+                <Text style={styles.premiumText}>
+                  Desbloqueie acesso completo aos entradas, treinamento completo e materiais exclusivos.
+                </Text>
+                <TouchableOpacity style={styles.upgradeButton}>
+                  <Text style={styles.upgradeButtonText}>Fazer Upgrade</Text>
                 </TouchableOpacity>
               </View>
             </View>
           </ScrollView>
         </>
       )}
-      <StatusBar style="light" />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -181,20 +236,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#111',
-    paddingTop: 50,
-  },
-  header: {
-    padding: 16,
-  },
-  headerTitle: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  headerSubtitle: {
-    color: '#999',
-    fontSize: 14,
   },
   content: {
     flex: 1,
@@ -220,10 +261,37 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: '#4ade80',
   },
-  episodeThumbnail: {
+  episodeCardBlocked: {
+    opacity: 0.5,
+  },
+  thumbnailContainer: {
+    position: 'relative',
     width: 100,
     height: 60,
+  },
+  episodeThumbnail: {
+    width: '100%',
+    height: '100%',
     borderRadius: 4,
+  },
+  blockedOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+  },
+  blockedText: {
+    color: '#fff',
+    fontSize: 12,
+    backgroundColor: 'rgba(31,41,55,0.8)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
   episodeInfo: {
     flex: 1,
@@ -248,7 +316,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   infoCard: {
-    backgroundColor: 'rgba(17, 24, 39, 0.8)',
+    backgroundColor: 'rgba(17,24,39,0.5)',
     borderRadius: 8,
     padding: 16,
     marginBottom: 16,
@@ -265,9 +333,9 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   warningBox: {
-    backgroundColor: 'rgba(4, 120, 87, 0.2)',
+    backgroundColor: 'rgba(4,120,87,0.2)',
     borderWidth: 1,
-    borderColor: 'rgba(4, 120, 87, 0.5)',
+    borderColor: 'rgba(4,120,87,0.5)',
     borderRadius: 8,
     padding: 12,
     marginTop: 16,
@@ -276,24 +344,33 @@ const styles = StyleSheet.create({
     color: '#4ade80',
     fontSize: 12,
   },
-  materialsCard: {
-    backgroundColor: 'rgba(17, 24, 39, 0.8)',
+  premiumCard: {
+    backgroundColor: 'rgba(17,24,39,0.5)',
     borderRadius: 8,
     padding: 16,
   },
-  materialsTitle: {
+  premiumTitle: {
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 12,
+    marginBottom: 8,
   },
-  materialLink: {
-    padding: 8,
-    borderRadius: 8,
-  },
-  materialLinkText: {
-    color: '#fff',
+  premiumText: {
+    color: '#999',
     fontSize: 14,
+    marginBottom: 16,
+  },
+  upgradeButton: {
+    borderWidth: 1,
+    borderColor: '#4ade80',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+  },
+  upgradeButtonText: {
+    color: '#4ade80',
+    fontSize: 14,
+    fontWeight: '500',
   },
   videoContainer: {
     flex: 1,
@@ -301,12 +378,11 @@ const styles = StyleSheet.create({
   },
   video: {
     flex: 1,
-    backgroundColor: '#000',
   },
   closeButton: {
     position: 'absolute',
-    top: 40,
-    right: 20,
+    top: 16,
+    right: 16,
     width: 40,
     height: 40,
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -314,26 +390,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  closeButtonText: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
   videoTitle: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
     padding: 16,
     backgroundColor: '#111',
-  },
-  loadingContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#000',
   },
 }); 
