@@ -15,6 +15,7 @@ export type TabParamList = {
   News: undefined;
   Grafico: undefined;
   Courses: undefined;
+  Reports: undefined;
 };
 
 export type NavigationProps = NativeStackNavigationProp<RootStackParamList>; 

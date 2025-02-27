@@ -1,4 +1,5 @@
 import React from 'react';
+import { Image, View, TouchableOpacity, Alert } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -12,11 +13,61 @@ import { RootStackParamList, TabParamList } from '../types/navigation';
 import NewsScreen from '../screens/News';
 import GraficoScreen from '../screens/Grafico';
 import CoursesScreen from '../screens/Courses';
+import ReportsScreen from '../screens/Reports';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
+function LogoTitle() {
+  return (
+    <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+      <Image
+        style={{
+          width: 180,
+          height: 45,
+          resizeMode: 'contain',
+        }}
+        source={require('../../assets/ft-icone.png')}
+      />
+    </View>
+  );
+}
+
 function TabNavigator() {
+  const { signOut } = useAuth();
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Sair',
+      'Tem certeza que deseja sair?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Sair',
+          style: 'destructive',
+          onPress: signOut,
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const headerRight = () => (
+    <TouchableOpacity 
+      onPress={handleLogout}
+      style={{ paddingRight: 16 }}
+    >
+      <Ionicons 
+        name="log-out-outline" 
+        size={24} 
+        color="#666"
+      />
+    </TouchableOpacity>
+  );
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -29,14 +80,22 @@ function TabNavigator() {
         },
         tabBarActiveTintColor: '#4ade80',
         tabBarInactiveTintColor: '#666',
-        headerShown: false,
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: '#111',
+          borderBottomWidth: 1,
+          borderBottomColor: '#333',
+        },
+        headerTitle: (props) => <LogoTitle {...props} />,
+        headerTitleAlign: 'center',
+        headerRight: headerRight,
+        tabBarShowLabel: false,
       }}
     >
       <Tab.Screen
         name="News"
         component={NewsScreen}
         options={{
-          tabBarLabel: 'Notícias',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="newspaper-outline" size={size} color={color} />
           ),
@@ -47,9 +106,18 @@ function TabNavigator() {
         name="Grafico"
         component={GraficoScreen}
         options={{
-          tabBarLabel: 'Gráficos',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="stats-chart" size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Reports"
+        component={ReportsScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="document-text-outline" size={size} color={color} />
           ),
         }}
       />
@@ -58,7 +126,6 @@ function TabNavigator() {
         name="Courses"
         component={CoursesScreen}
         options={{
-          tabBarLabel: 'Cursos',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="school-outline" size={size} color={color} />
           ),

@@ -14,12 +14,16 @@ export default function Reports() {
   const [initialTrades, setInitialTrades] = useState<Trade[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDirection, setSelectedDirection] = useState<'ALL' | 'LONG' | 'SHORT'>('ALL');
-  const [selectedMonth, setSelectedMonth] = useState<number>(10);
+  const [selectedMonth, setSelectedMonth] = useState<number>(11);
   const [loading, setLoading] = useState<boolean>(true);
 
   const months = [
+    { number: 8, name: 'Agosto' },
     { number: 9, name: 'Setembro' },
     { number: 10, name: 'Outubro' },
+    { number: 11, name: 'Novembro' },
+    { number: 12, name: 'Dezembro' },
+    { number: 1, name: 'Janeiro' }
   ];
 
   useEffect(() => {
@@ -71,7 +75,41 @@ export default function Reports() {
     const matchesMonth = tradeMonth === selectedMonth;
     
     return matchesSearch && matchesDirection && matchesMonth;
-  });
+  }).concat(
+    selectedMonth === 11 ? [
+        {"data": "01/11/2024", "ativo": "SUI/USDT", "direcao": "LONG", "percentual": 140.00, "alvo": "8"},
+        {"data": "01/11/2024", "ativo": "TROY/USDT", "direcao": "LONG", "percentual": 140.40, "alvo": "8"},
+        {"data": "01/11/2024", "ativo": "SYN/USDT", "direcao": "LONG", "percentual": 80.00, "alvo": "5"},
+        {"data": "01/11/2024", "ativo": "ENA/USDT", "direcao": "LONG", "percentual": 80.00, "alvo": "5"},
+        {"data": "02/11/2024", "ativo": "OGN/USDT", "direcao": "LONG", "percentual": 180.80, "alvo": "10"},
+        {"data": "02/11/2024", "ativo": "RARE/USDT", "direcao": "LONG", "percentual": 21.20, "alvo": "2"},
+        {"data": "28/11/2024", "ativo": "ARKM/USDT", "direcao": "LONG", "percentual": 40.00, "alvo": "3"},
+        {"data": "29/11/2024", "ativo": "XLM/USDT", "direcao": "LONG", "percentual": 40.00, "alvo": "3"}
+    ].filter(trade => 
+        trade.ativo.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (selectedDirection === 'ALL' || trade.direcao === selectedDirection)
+    ) : selectedMonth === 12 ? [
+        {"data": "01/12/2024", "ativo": "BLUR/USDT", "direcao": "SHORT", "percentual": 87.00, "alvo": "11"},
+        {"data": "01/12/2024", "ativo": "IO/USDT", "direcao": "LONG", "percentual": 40.00, "alvo": "3"},
+        {"data": "01/12/2024", "ativo": "DOGE/USDT", "direcao": "LONG", "percentual": 60.00, "alvo": "4"},
+        {"data": "31/12/2024", "ativo": "MEU/USDT", "direcao": "LONG", "percentual": 20.40, "alvo": "2"},
+        {"data": "31/12/2024", "ativo": "CGPT/USDT", "direcao": "LONG", "percentual": 20.00, "alvo": "2"},
+        {"data": "31/12/2024", "ativo": "1000BONK/USDT", "direcao": "LONG", "percentual": 20.00, "alvo": "2"},
+        {"data": "31/12/2024", "ativo": "TROY/USDT", "direcao": "LONG", "percentual": 200.00, "alvo": "11"}
+    ].filter(trade => 
+        trade.ativo.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (selectedDirection === 'ALL' || trade.direcao === selectedDirection)
+    ) : selectedMonth === 1 ? [
+        {"data": "01/01/2025", "ativo": "GRT/USDT", "direcao": "LONG", "percentual": 200.00, "alvo": "11"},
+        {"data": "01/01/2025", "ativo": "XRP/USDT", "direcao": "LONG", "percentual": 200.00, "alvo": "11"},
+        {"data": "01/01/2025", "ativo": "POPCAT/USDT", "direcao": "LONG", "percentual": 200.00, "alvo": "11"},
+        {"data": "01/01/2025", "ativo": "ONODO/USDT", "direcao": "LONG", "percentual": 200.00, "alvo": "11"},
+        {"data": "31/01/2025", "ativo": "LINK/USDT", "direcao": "LONG", "percentual": 80.00, "alvo": "5"}
+    ].filter(trade => 
+        trade.ativo.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (selectedDirection === 'ALL' || trade.direcao === selectedDirection)
+    ) : []
+  );
 
   const totalOperacoes = filteredData.length;
   const operacoesLucrativas = filteredData.filter(t => t.percentual > 0).length;
