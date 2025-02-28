@@ -14,6 +14,7 @@ import NewsScreen from '../screens/News';
 import GraficoScreen from '../screens/Grafico';
 import CoursesScreen from '../screens/Courses';
 import ReportsScreen from '../screens/Reports';
+import SinaisScreen from '../screens/Sinais';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -102,6 +103,16 @@ function TabNavigator() {
         }}
       />
       
+      <Tab.Screen
+        name="Sinais"
+        component={SinaisScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="notifications-outline" size={size} color={color} />
+          ),
+        }}
+      />
+
       <Tab.Screen
         name="Grafico"
         component={GraficoScreen}

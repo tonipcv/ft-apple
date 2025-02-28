@@ -234,7 +234,7 @@ export default function NewsScreen() {
               style={styles.closeButton}
               onPress={() => setSelectedNews(null)}
             >
-              <Ionicons name="close" size={24} color="#999" />
+              <Ionicons name="close" size={24} color="#fff" />
             </TouchableOpacity>
 
             {selectedNews && (
@@ -249,7 +249,7 @@ export default function NewsScreen() {
                 )}
                 <Text style={styles.modalSummary}>{selectedNews.summary}</Text>
                 {selectedNews.content && (
-                  <Text style={styles.modalContent}>{selectedNews.content}</Text>
+                  <Text style={styles.modalText}>{selectedNews.content}</Text>
                 )}
                 <Text style={styles.modalDate}>
                   {formatDate(selectedNews.publishedAt)}
@@ -421,25 +421,27 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.9)',
+    backgroundColor: 'rgba(0,0,0,0.95)',
     justifyContent: 'center',
     padding: 16,
   },
   modalContent: {
     backgroundColor: '#1a1a1a',
     borderRadius: 12,
-    padding: 16,
+    padding: 20,
     maxHeight: '90%',
   },
   closeButton: {
     alignSelf: 'flex-end',
     padding: 8,
+    marginBottom: 8,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#4ade80',
     marginBottom: 16,
+    lineHeight: 28,
   },
   modalImage: {
     width: '100%',
@@ -448,19 +450,21 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   modalSummary: {
-    color: '#999',
+    color: '#fff',
     fontSize: 16,
-    marginBottom: 16,
+    marginBottom: 20,
     lineHeight: 24,
   },
   modalText: {
-    color: '#fff',
-    fontSize: 14,
-    lineHeight: 20,
+    color: '#ccc',
+    fontSize: 15,
+    lineHeight: 24,
+    marginBottom: 16,
   },
   modalDate: {
     color: '#666',
     fontSize: 12,
     marginTop: 16,
+    textAlign: 'right',
   },
 }); 

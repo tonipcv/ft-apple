@@ -9,7 +9,6 @@ interface Episode {
   id: number;
   title: string;
   duration: string;
-  thumbnail: any;
   number: number;
   videoId: string;
   blocked?: boolean;
@@ -23,7 +22,6 @@ export default function Courses() {
       id: 1,
       title: "Criando Conta",
       duration: "5:00",
-      thumbnail: require('../../assets/thumb.jpg'),
       number: 1,
       videoId: "5395e307-c953-4f5f-b488-05c7663e936e"
     },
@@ -31,7 +29,6 @@ export default function Courses() {
       id: 2,
       title: "Como abrir operações",
       duration: "8:00",
-      thumbnail: require('../../assets/thumb.jpg'),
       number: 2,
       videoId: "77a18ba6-0b61-4404-84e1-439ac21939b6"
     },
@@ -39,7 +36,6 @@ export default function Courses() {
       id: 3,
       title: "Ordens Automáticas",
       duration: "7:00",
-      thumbnail: require('../../assets/thumb.jpg'),
       number: 3,
       videoId: "2346652c-0339-4e70-9b79-d38cce3a3e66"
     },
@@ -47,7 +43,6 @@ export default function Courses() {
       id: 4,
       title: "Indicador RSI",
       duration: "6:30",
-      thumbnail: require('../../assets/thumb.jpg'),
       number: 4,
       videoId: "d529afa3-5e48-4f0e-8d7b-4bd1340d8c11"
     },
@@ -55,7 +50,6 @@ export default function Courses() {
       id: 5,
       title: "Análise gráfica",
       duration: "7:30",
-      thumbnail: require('../../assets/thumb.jpg'),
       number: 5,
       videoId: "32763169-e418-4aee-a0df-b07db05f1843"
     },
@@ -63,7 +57,6 @@ export default function Courses() {
       id: 6,
       title: "Gerenciamento",
       duration: "6:00",
-      thumbnail: require('../../assets/thumb.jpg'),
       number: 6,
       videoId: "c3853fe1-2f07-4215-9778-a20ed81d1b23"
     },
@@ -71,7 +64,6 @@ export default function Courses() {
       id: 7,
       title: "Informação Importante!",
       duration: "6:00",
-      thumbnail: require('../../assets/thumb.jpg'),
       number: 7,
       videoId: "c689c709-5643-4fb6-be32-6f080a5f5066"
     },
@@ -79,7 +71,6 @@ export default function Courses() {
       id: 8,
       title: "Estratégia Exclusiva 1",
       duration: "8:00",
-      thumbnail: require('../../assets/thumb.jpg'),
       number: 8,
       videoId: "blocked",
       blocked: true
@@ -88,7 +79,6 @@ export default function Courses() {
       id: 9,
       title: "Estratégia Exclusiva 2",
       duration: "10:00",
-      thumbnail: require('../../assets/thumb.jpg'),
       number: 9,
       videoId: "blocked",
       blocked: true
@@ -97,7 +87,6 @@ export default function Courses() {
       id: 10,
       title: "Estratégia Exclusiva 3",
       duration: "7:00",
-      thumbnail: require('../../assets/thumb.jpg'),
       number: 10,
       videoId: "blocked",
       blocked: true
@@ -182,21 +171,20 @@ export default function Courses() {
                   onPress={() => !episode.blocked && setActiveEpisode(episode.id)}
                   disabled={episode.blocked}
                 >
-                  <View style={styles.thumbnailContainer}>
-                    <Image
-                      source={episode.thumbnail}
-                      style={styles.episodeThumbnail}
-                    />
-                    {episode.blocked && (
-                      <View style={styles.blockedOverlay}>
+                  <View style={styles.episodeContent}>
+                    <View style={styles.episodeInfo}>
+                      <Text style={styles.episodeNumber}>Aula {episode.number}</Text>
+                      <Text style={styles.episodeTitle}>{episode.title}</Text>
+                      <Text style={styles.episodeDuration}>{episode.duration}</Text>
+                    </View>
+                    
+                    {!episode.blocked ? (
+                      <Ionicons name="play-circle-outline" size={24} color="#4ade80" />
+                    ) : (
+                      <View style={styles.blockedBadge}>
                         <Text style={styles.blockedText}>Em breve...</Text>
                       </View>
                     )}
-                  </View>
-                  <View style={styles.episodeInfo}>
-                    <Text style={styles.episodeNumber}>Aula {episode.number}</Text>
-                    <Text style={styles.episodeTitle}>{episode.title}</Text>
-                    <Text style={styles.episodeDuration}>{episode.duration}</Text>
                   </View>
                 </TouchableOpacity>
               ))}
@@ -250,10 +238,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   episodeCard: {
-    flexDirection: 'row',
     backgroundColor: '#222',
     borderRadius: 8,
-    padding: 8,
+    padding: 16,
     marginBottom: 8,
   },
   episodeCardActive: {
@@ -264,38 +251,14 @@ const styles = StyleSheet.create({
   episodeCardBlocked: {
     opacity: 0.5,
   },
-  thumbnailContainer: {
-    position: 'relative',
-    width: 100,
-    height: 60,
-  },
-  episodeThumbnail: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 4,
-  },
-  blockedOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    justifyContent: 'center',
+  episodeContent: {
+    flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 4,
-  },
-  blockedText: {
-    color: '#fff',
-    fontSize: 12,
-    backgroundColor: 'rgba(31,41,55,0.8)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    justifyContent: 'space-between',
   },
   episodeInfo: {
     flex: 1,
-    marginLeft: 12,
+    marginRight: 16,
   },
   episodeNumber: {
     color: '#4ade80',
@@ -311,6 +274,18 @@ const styles = StyleSheet.create({
     color: '#666',
     fontSize: 12,
     marginTop: 4,
+  },
+  blockedBadge: {
+    backgroundColor: 'rgba(31,41,55,0.8)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+  blockedText: {
+    color: '#fff',
+    fontSize: 12,
   },
   infoSection: {
     padding: 16,
