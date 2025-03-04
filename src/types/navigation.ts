@@ -9,6 +9,7 @@ export type RootStackParamList = {
   News: undefined;
   Grafico: undefined;
   Courses: undefined;
+  ForgotPassword: undefined;
 };
 
 export type TabParamList = {

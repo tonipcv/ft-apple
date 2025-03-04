@@ -15,6 +15,7 @@ import GraficoScreen from '../screens/Grafico';
 import CoursesScreen from '../screens/Courses';
 import ReportsScreen from '../screens/Reports';
 import SinaisScreen from '../screens/Sinais';
+import ForgotPasswordScreen from '../screens/ForgotPassword';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -181,6 +182,11 @@ export default function AppNavigator() {
           <Stack.Screen 
             name="RegisterSuccess" 
             component={RegisterSuccessScreen}
+            options={{ gestureEnabled: false }}
+          />
+          <Stack.Screen 
+            name="ForgotPassword" 
+            component={ForgotPasswordScreen}
             options={{ gestureEnabled: false }}
           />
         </>

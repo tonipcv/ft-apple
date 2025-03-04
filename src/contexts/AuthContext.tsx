@@ -9,6 +9,7 @@ type AuthContextType = {
   user: User | null;
   session: Session | null;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithUser: (user: User) => Promise<void>;
   signOut: () => Promise<void>;
   isRegistering: boolean;
   setIsRegistering: (value: boolean) => void;
@@ -96,10 +97,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const signInWithUser = async (user: User) => {
+    try {
+      setUser(user);
+      // Obter a sessão atual após login OAuth
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      
+      setSession(data.session);
+      return data;
+    } catch (error) {
+      console.error('Erro no signInWithUser:', error);
+      throw error;
+    }
+  };
+
   const value = {
     user,
     session,
     signIn,
+    signInWithUser,
     signOut,
     isRegistering,
     setIsRegistering,

@@ -23,6 +23,14 @@ import { NavigationProps } from '../types/navigation';
 // Registrar o WebBrowser
 WebBrowser.maybeCompleteAuthSession();
 
+// URL de redirecionamento para o Supabase
+const redirectUri = makeRedirectUri({
+  scheme: 'com.k17.ft',
+  preferLocalhost: false
+});
+
+console.log('URL de redirecionamento:', redirectUri);
+
 export default function Login() {
   const navigation = useNavigation<NavigationProps>();
   const [email, setEmail] = useState('');
@@ -65,6 +73,8 @@ export default function Login() {
       setIsSubmitting(false);
     }
   };
+
+
 
   const handleAppleLogin = async () => {
     try {
@@ -144,6 +154,8 @@ export default function Login() {
             <Text style={styles.errorText}>{error}</Text>
           )}
 
+
+
           <TouchableOpacity
             style={styles.appleButton}
             onPress={handleAppleLogin}
@@ -215,7 +227,7 @@ export default function Login() {
             onPress={() => navigation.navigate('Home')}
             style={styles.subscribeLink}
           >
-            <Text style={styles.subscribeLinkText}>Assinar agora</Text>
+            <Text style={styles.subscribeLinkText}>Criar conta agora!</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -228,6 +240,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#111',
   },
+
   scrollContainer: {
     flexGrow: 1,
     padding: 20,
